@@ -2,8 +2,13 @@
   "version": 2,
   "buildCommand": "frog vercel-build",
   "framework": null,
+  "functions": {
+    "api/index.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
   "routes": [
-    { "src": "/api(?:/.*)?", "dest": "src/app.tsx" },
-    { "src": "/", "dest": "src/app.tsx" }
+    { "src": "/api(?:/.*)?", "dest": "api/index.js" },
+    { "src": "/", "dest": "api/index.js" }
   ]
 }
