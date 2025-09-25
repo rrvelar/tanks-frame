@@ -1,10 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "src/app.tsx", "use": "@vercel/node" }
-  ],
-  "routes": [
-    { "src": "/api(?:/.*)?", "dest": "/src/app.tsx" },
-    { "src": "/", "dest": "/src/app.tsx" }
-  ]
+  "buildCommand": "frog vercel-build",
+  "framework": null
 }
