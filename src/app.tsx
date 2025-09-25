@@ -72,4 +72,86 @@ function renderGrid(s: GameState): string[] {
       const isE = s.e && s.e.x === x && s.e.y === y;
       if (isP) row.push(DIR_ICON[s.d]);
       else if (isE) row.push("💣");
+      else row.push(EMPTY);
+    }
+    rows.push(row.join(" "));
+  }
+  return rows;
+}
 
+function screen(c: any, s: GameState) {
+  const grid = renderGrid(s);
+  const subtitle = s.win ? "🎉 Победа! Вы поразили врага" : "Стреляй по направлению танка";
+  return c.res({
+    image: (
+      <div style={{
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        width: "100%", height: "100%", background: "#0B0F1A", color: "#fff",
+        fontFamily: "monospace", padding: 24
+      }}>
+        <div style={{ fontSize: 72, marginBottom: 8 }}>Tanks — Frame</div>
+        <div style={{ opacity: 0.8, fontSize: 28, marginBottom: 16 }}>{subtitle}</div>
+        <div style={{ fontSize: 44, lineHeight: 1.3 }}>
+          {grid.map((r, i) => (
+            <div key={i}>{r}</div>
+          ))}
+        </div>
+        <div style={{ marginTop: 16, fontSize: 24, opacity: 0.8 }}>Moves: {s.moves}</div>
+      </div>
+    ),
+    intents: s.win ? [
+      <Button action="/reset">🔁 Reset</Button>,
+      <Button action="/share" target="_blank">Share</Button>,
+    ] : [
+      <Button action="/up">⬆️ Up</Button>,
+      <Button action="/left">⬅️ Left</Button>,
+      <Button action="/right">➡️ Right</Button>,
+      <Button action="/down">⬇️ Down</Button>,
+      <Button action="/shoot">💥 Shoot</Button>,
+      <Button action="/reset">🔁 Reset</Button>,
+      <Button action="/share" target="_blank">Share</Button>,
+    ],
+    state: s,
+  });
+}
+
+// ==== РОУТЫ ФРЕЙМА ====
+app.frame("/", (c) => {
+  const st = (c.state as GameState) || ({} as GameState);
+  const s = st?.init ? st : initState();
+  return screen(c, s);
+});
+
+app.frame("/reset", (c) => screen(c, initState()));
+
+app.frame("/up", (c) => { const s = (c.state as GameState) || initState(); movePlayer(s, "U"); return screen(c, s); });
+app.frame("/down", (c) => { const s = (c.state as GameState) || initState(); movePlayer(s, "D"); return screen(c, s); });
+app.frame("/left", (c) => { const s = (c.state as GameState) || initState(); movePlayer(s, "L"); return screen(c, s); });
+app.frame("/right", (c) => { const s = (c.state as GameState) || initState(); movePlayer(s, "R"); return screen(c, s); });
+app.frame("/shoot", (c) => { const s = (c.state as GameState) || initState(); shoot(s); return screen(c, s); });
+
+app.frame("/share", (c) => {
+  const s = (c.state as GameState) || initState();
+  const text = encodeURIComponent(
+    s.win ? `Я победил в Tanks за ${s.moves} хода! 🛡️` : `Играю в Tanks — попробуешь обыграть?`
+  );
+  return c.res({
+    image: (
+      <div style={{
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        width: "100%", height: "100%", background: "#0B0F1A", color: "#fff",
+      }}>
+        <div style={{ fontSize: 72, marginBottom: 16 }}>Поделись в Warpcast</div>
+        <div style={{ fontSize: 28, opacity: 0.8 }}>Пусть друзья попробуют побить твой результат</div>
+      </div>
+    ),
+    intents: [
+      <Button.Link href={`https://warpcast.com/~/compose?text=${text}`}>Open Warpcast</Button.Link>,
+      <Button action="/">⬅️ Back</Button>,
+    ],
+    state: s,
+  });
+});
+
+// ==== СЕРВЕР ====
+serve(app);
