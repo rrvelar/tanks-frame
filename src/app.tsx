@@ -1,13 +1,13 @@
 import { Frog, Button } from "frog";
 import { devtools } from "frog/dev";
 
+// ==== БАЗА ПРИЛОЖЕНИЯ ====
 const app = new Frog({
   basePath: "/api",
-  title: "Tanks Frame Game", // обязательный параметр
+  title: "Tanks Frame Game",
 });
 
 devtools(app);
-
 
 // ==== ТИПЫ И ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====
 type Dir = "U" | "D" | "L" | "R";
@@ -23,10 +23,9 @@ interface GameState {
 }
 
 const DIR_ICON: Record<Dir, string> = { U: "▲", D: "▼", L: "◀", R: "▶" };
-const EMPTY = "·"; // можно заменить на "⬛"
+const EMPTY = "·";
 
 const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
-const eq = (a: Vec, b: Vec) => a.x === b.x && a.y === b.y;
 const copy = <T,>(o: T): T => JSON.parse(JSON.stringify(o));
 
 const initState = (): GameState => ({
@@ -40,7 +39,7 @@ const initState = (): GameState => ({
 });
 
 function movePlayer(s: GameState, nd: Dir) {
-  if (s.win) return s; // уже победили
+  if (s.win) return s;
   s.d = nd;
   const np = copy(s.p);
   if (nd === "U") np.y -= 1;
@@ -104,7 +103,7 @@ function screen(c: any, s: GameState) {
     ),
     intents: s.win ? [
       <Button action="/reset">🔁 Reset</Button>,
-      <Button.Link href="/share">Share</Button.Link>
+      <Button.Link href="/share">Share</Button.Link>,
     ] : [
       <Button action="/up">⬆️ Up</Button>,
       <Button action="/left">⬅️ Left</Button>,
@@ -112,48 +111,24 @@ function screen(c: any, s: GameState) {
       <Button action="/down">⬇️ Down</Button>,
       <Button action="/shoot">💥 Shoot</Button>,
       <Button action="/reset">🔁 Reset</Button>,
-      <Button.Link href="/share">Share</Button.Link>
+      <Button.Link href="/share">Share</Button.Link>,
     ],
     state: s,
   });
 }
 
 // ==== РОУТЫ ФРЕЙМА ====
+
+// Главный экран
 app.frame("/", (c) => {
-  const st = (c.state as GameState) || ({} as GameState);
+  const st = (c.req.state as GameState) || ({} as GameState);
   const s = st?.init ? st : initState();
   return screen(c, s);
 });
 
+// Сброс
 app.frame("/reset", (c) => screen(c, initState()));
 
-app.frame("/up", (c) => { const s = (c.state as GameState) || initState(); movePlayer(s, "U"); return screen(c, s); });
-app.frame("/down", (c) => { const s = (c.state as GameState) || initState(); movePlayer(s, "D"); return screen(c, s); });
-app.frame("/left", (c) => { const s = (c.state as GameState) || initState(); movePlayer(s, "L"); return screen(c, s); });
-app.frame("/right", (c) => { const s = (c.state as GameState) || initState(); movePlayer(s, "R"); return screen(c, s); });
-app.frame("/shoot", (c) => { const s = (c.state as GameState) || initState(); shoot(s); return screen(c, s); });
-
-app.frame("/share", (c) => {
-  const s = (c.state as GameState) || initState();
-  const text = encodeURIComponent(
-    s.win ? `Я победил в Tanks за ${s.moves} хода! 🛡️` : `Играю в Tanks — попробуешь обыграть?`
-  );
-  return c.res({
-    image: (
-      <div style={{
-        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-        width: "100%", height: "100%", background: "#0B0F1A", color: "#fff",
-      }}>
-        <div style={{ fontSize: 72, marginBottom: 16 }}>Поделись в Warpcast</div>
-        <div style={{ fontSize: 28, opacity: 0.8 }}>Пусть друзья попробуют побить твой результат</div>
-      </div>
-    ),
-    intents: [
-      <Button.Link href={`https://warpcast.com/~/compose?text=${text}`}>Open Warpcast</Button.Link>,
-      <Button action="/">⬅️ Back</Button>,
-    ],
-    state: s,
-  });
-});
-
-// ==== СЕРВЕР ====
+// Движение
+app.frame("/up", (c) => { const s = (c.req.state as GameState) || initState(); movePlayer(s, "U"); return screen(c, s); });
+app.f
