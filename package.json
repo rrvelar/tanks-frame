@@ -1,16 +1,17 @@
 {
   "name": "tanks-frame",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
     "dev": "frog dev",
-    "vercel-build": "frog vercel-build"
+    "build": "frog build",
+    "vercel-build": "frog vercel-build",
+    "start": "frog start"
   },
   "dependencies": {
-    "frog": "latest",
-    "hono": "latest"
+    "frog": "latest"
   },
   "devDependencies": {
-    "typescript": "^5.4.0"
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
   }
 }
