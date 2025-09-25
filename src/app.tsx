@@ -6,7 +6,7 @@ const app = new Frog({
   title: "Tanks Frame Game", // обязательный параметр
 });
 
-devtools(app, { serveStatic: true });
+devtools(app);
 
 
 // ==== ТИПЫ И ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====
@@ -104,7 +104,7 @@ function screen(c: any, s: GameState) {
     ),
     intents: s.win ? [
       <Button action="/reset">🔁 Reset</Button>,
-      <Button action="/share" target="_blank">Share</Button>,
+      <Button.Link href="/share">Share</Button.Link>
     ] : [
       <Button action="/up">⬆️ Up</Button>,
       <Button action="/left">⬅️ Left</Button>,
@@ -112,7 +112,7 @@ function screen(c: any, s: GameState) {
       <Button action="/down">⬇️ Down</Button>,
       <Button action="/shoot">💥 Shoot</Button>,
       <Button action="/reset">🔁 Reset</Button>,
-      <Button action="/share" target="_blank">Share</Button>,
+      <Button.Link href="/share">Share</Button.Link>
     ],
     state: s,
   });
