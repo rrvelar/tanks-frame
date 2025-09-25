@@ -16,7 +16,7 @@ export const app = new Frog<{ State: State }>({
 
 // Главный экран
 app.frame("/", (c) => {
-  const { x, y } = c.state
+  const { x, y } = c.deriveState((s) => s)   // ✅ вместо c.state
 
   return c.res({
     image: (
@@ -36,34 +36,34 @@ app.frame("/", (c) => {
 
 // Движения
 app.frame("/up", (c) => {
-  c.deriveState((s) => { s.y -= 1 })
+  const { x, y } = c.deriveState((s) => { s.y -= 1 })
   return c.res({
     action: "/",
-    image: <div><p>Обновляем...</p></div>,
+    image: <div>Обновляем...</div>,
   })
 })
 
 app.frame("/down", (c) => {
-  c.deriveState((s) => { s.y += 1 })
+  const { x, y } = c.deriveState((s) => { s.y += 1 })
   return c.res({
     action: "/",
-    image: <div><p>Обновляем...</p></div>,
+    image: <div>Обновляем...</div>,
   })
 })
 
 app.frame("/left", (c) => {
-  c.deriveState((s) => { s.x -= 1 })
+  const { x, y } = c.deriveState((s) => { s.x -= 1 })
   return c.res({
     action: "/",
-    image: <div><p>Обновляем...</p></div>,
+    image: <div>Обновляем...</div>,
   })
 })
 
 app.frame("/right", (c) => {
-  c.deriveState((s) => { s.x += 1 })
+  const { x, y } = c.deriveState((s) => { s.x += 1 })
   return c.res({
     action: "/",
-    image: <div><p>Обновляем...</p></div>,
+    image: <div>Обновляем...</div>,
   })
 })
 
