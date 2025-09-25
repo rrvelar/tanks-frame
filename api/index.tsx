@@ -16,7 +16,8 @@ export const app = new Frog<{ State: State }>({
 
 // Главный экран
 app.frame("/", (c) => {
-  const { x, y } = c.deriveState((s) => s)   // ✅ вместо c.state
+  // просто читаем состояние, без return
+  const { x, y } = c.deriveState((s) => s)
 
   return c.res({
     image: (
@@ -37,34 +38,29 @@ app.frame("/", (c) => {
 // Движения
 app.frame("/up", (c) => {
   const { x, y } = c.deriveState((s) => { s.y -= 1 })
-  return c.res({
-    action: "/",
-    image: <div>Обновляем...</div>,
-  })
+  return renderUpdate(c, x, y)
 })
 
 app.frame("/down", (c) => {
   const { x, y } = c.deriveState((s) => { s.y += 1 })
-  return c.res({
-    action: "/",
-    image: <div>Обновляем...</div>,
-  })
+  return renderUpdate(c, x, y)
 })
 
 app.frame("/left", (c) => {
   const { x, y } = c.deriveState((s) => { s.x -= 1 })
-  return c.res({
-    action: "/",
-    image: <div>Обновляем...</div>,
-  })
+  return renderUpdate(c, x, y)
 })
 
 app.frame("/right", (c) => {
   const { x, y } = c.deriveState((s) => { s.x += 1 })
-  return c.res({
-    action: "/",
-    image: <div>Обновляем...</div>,
-  })
+  return renderUpdate(c, x, y)
 })
+
+function renderUpdate(c: any, x: number, y: number) {
+  return c.res({
+    image: <div>Обновляем… ({x},{y})</div>,
+    action: "/",
+  })
+}
 
 export default app
