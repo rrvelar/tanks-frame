@@ -7,8 +7,8 @@ interface Vec { x: number; y: number }
 interface GameState {
   w: number;
   h: number;
-  p: Vec;     // позиция игрока
-  d: Dir;     // направление игрока
+  p: Vec;        // позиция игрока
+  d: Dir;        // направление игрока
   e: Vec | null; // враг
   win: boolean;
   moves: number;
@@ -123,42 +123,49 @@ const app = new Frog<{ State: GameState }>({
 devtools(app);
 
 // ==== Роуты ====
+
+// Главный экран
 app.frame("/", (c) => {
-  const s = c.state?.init ? c.state : initState();
+  const st = (c.req.state as GameState) || ({} as GameState);
+  const s = st?.init ? st : initState();
   return screen(c, s);
 });
 
+// Reset
 app.frame("/reset", (c) => screen(c, initState()));
 
+// Движение
 app.frame("/up", (c) => {
-  const s = c.state?.init ? c.state : initState();
+  const s = (c.req.state as GameState) || initState();
   movePlayer(s, "U");
   return screen(c, s);
 });
 app.frame("/down", (c) => {
-  const s = c.state?.init ? c.state : initState();
+  const s = (c.req.state as GameState) || initState();
   movePlayer(s, "D");
   return screen(c, s);
 });
 app.frame("/left", (c) => {
-  const s = c.state?.init ? c.state : initState();
+  const s = (c.req.state as GameState) || initState();
   movePlayer(s, "L");
   return screen(c, s);
 });
 app.frame("/right", (c) => {
-  const s = c.state?.init ? c.state : initState();
+  const s = (c.req.state as GameState) || initState();
   movePlayer(s, "R");
   return screen(c, s);
 });
 
+// Shoot
 app.frame("/shoot", (c) => {
-  const s = c.state?.init ? c.state : initState();
+  const s = (c.req.state as GameState) || initState();
   shoot(s);
   return screen(c, s);
 });
 
+// Share
 app.frame("/share", (c) => {
-  const s = c.state?.init ? c.state : initState();
+  const s = (c.req.state as GameState) || initState();
   const text = encodeURIComponent(
     s.win ? `Я победил в Tanks за ${s.moves} хода! 🛡️` : `Играю в Tanks — попробуешь обыграть?`
   );
