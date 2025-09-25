@@ -1,72 +1,86 @@
-import { Frog } from "frog";
-import { Button } from "frog";
+/** @jsxImportSource frog/jsx */
 
-type State = {
+import { Frog } from "frog";
+
+type GameState = {
   x: number;
   y: number;
 };
 
-const app = new Frog<{ State: State }>({
-  title: "Tanks Frame",
-  initialState: {
-    x: 5,
-    y: 5,
-  },
+const app = new Frog<{ State: GameState }>({
+  initialState: { x: 5, y: 5 }
 });
 
-function renderScene(x: number, y: number, c: any) {
+function renderGame(state: GameState) {
+  const grid = Array.from({ length: 10 }, () => Array(10).fill("⬜"));
+  grid[state.y][state.x] = "🚜"; // танк
+  return grid.map((row) => row.join("")).join("\n");
+}
+
+app.frame("/", (c) => {
+  const state = c.memory.state<GameState>() ?? { x: 5, y: 5 };
+
   return c.res({
     image: (
-      <div style={{ fontSize: 40, textAlign: "center" }}>
-        🚀 Tank at ({x}, {y})
+      <div style={{ fontSize: 24, whiteSpace: "pre" }}>
+        {renderGame(state)}
       </div>
     ),
     intents: [
-      <Button action="/up">⬆️</Button>,
-      <Button action="/down">⬇️</Button>,
-      <Button action="/left">⬅️</Button>,
-      <Button action="/right">➡️</Button>,
-    ],
+      { action: "/up", label: "⬆️" },
+      { action: "/down", label: "⬇️" },
+      { action: "/left", label: "⬅️" },
+      { action: "/right", label: "➡️" }
+    ]
   });
-}
-
-// стартовый экран
-app.frame("/", (c) => {
-  const { x, y } = c.deriveState((s) => s);
-  return renderScene(x, y, c);
 });
 
-// управление
 app.frame("/up", (c) => {
-  const { x, y } = c.deriveState((s) => {
-    s.y -= 1;
-    return s;
+  const state = c.memory.state<GameState>() ?? { x: 5, y: 5 };
+  return c.res({
+    image: (
+      <div style={{ fontSize: 24, whiteSpace: "pre" }}>
+        {renderGame({ ...state, y: Math.max(0, state.y - 1) })}
+      </div>
+    ),
+    intents: [{ action: "/", label: "◀️ Назад" }]
   });
-  return renderScene(x, y, c);
 });
 
 app.frame("/down", (c) => {
-  const { x, y } = c.deriveState((s) => {
-    s.y += 1;
-    return s;
+  const state = c.memory.state<GameState>() ?? { x: 5, y: 5 };
+  return c.res({
+    image: (
+      <div style={{ fontSize: 24, whiteSpace: "pre" }}>
+        {renderGame({ ...state, y: Math.min(9, state.y + 1) })}
+      </div>
+    ),
+    intents: [{ action: "/", label: "◀️ Назад" }]
   });
-  return renderScene(x, y, c);
 });
 
 app.frame("/left", (c) => {
-  const { x, y } = c.deriveState((s) => {
-    s.x -= 1;
-    return s;
+  const state = c.memory.state<GameState>() ?? { x: 5, y: 5 };
+  return c.res({
+    image: (
+      <div style={{ fontSize: 24, whiteSpace: "pre" }}>
+        {renderGame({ ...state, x: Math.max(0, state.x - 1) })}
+      </div>
+    ),
+    intents: [{ action: "/", label: "◀️ Назад" }]
   });
-  return renderScene(x, y, c);
 });
 
 app.frame("/right", (c) => {
-  const { x, y } = c.deriveState((s) => {
-    s.x += 1;
-    return s;
+  const state = c.memory.state<GameState>() ?? { x: 5, y: 5 };
+  return c.res({
+    image: (
+      <div style={{ fontSize: 24, whiteSpace: "pre" }}>
+        {renderGame({ ...state, x: Math.min(9, state.x + 1) })}
+      </div>
+    ),
+    intents: [{ action: "/", label: "◀️ Назад" }]
   });
-  return renderScene(x, y, c);
 });
 
 export default app;
