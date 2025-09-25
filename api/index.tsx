@@ -37,22 +37,34 @@ app.frame("/", (c) => {
 // Движения
 app.frame("/up", (c) => {
   c.deriveState((s) => { s.y -= 1 })
-  return c.res({ action: "/" })
+  return c.res({
+    action: "/",
+    image: <div><p>Обновляем...</p></div>,
+  })
 })
 
 app.frame("/down", (c) => {
   c.deriveState((s) => { s.y += 1 })
-  return c.res({ action: "/" })
+  return c.res({
+    action: "/",
+    image: <div><p>Обновляем...</p></div>,
+  })
 })
 
 app.frame("/left", (c) => {
   c.deriveState((s) => { s.x -= 1 })
-  return c.res({ action: "/" })
+  return c.res({
+    action: "/",
+    image: <div><p>Обновляем...</p></div>,
+  })
 })
 
 app.frame("/right", (c) => {
   c.deriveState((s) => { s.x += 1 })
-  return c.res({ action: "/" })
+  return c.res({
+    action: "/",
+    image: <div><p>Обновляем...</p></div>,
+  })
 })
 
 export default app
