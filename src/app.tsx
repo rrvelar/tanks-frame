@@ -18,9 +18,7 @@ function renderScene(x: number, y: number, c: any) {
   return c.res({
     image: (
       <div style={{ fontSize: 40, textAlign: "center" }}>
-        🟩🟩🟩🟩🟩<br />
-        🚀 Tank at ({x}, {y})<br />
-        🟩🟩🟩🟩🟩
+        🚀 Tank at ({x}, {y})
       </div>
     ),
     intents: [
@@ -32,7 +30,7 @@ function renderScene(x: number, y: number, c: any) {
   });
 }
 
-// старт
+// стартовый экран
 app.frame("/", (c) => {
   const { x, y } = c.deriveState((s) => s);
   return renderScene(x, y, c);
