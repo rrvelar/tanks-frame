@@ -1,10 +1,13 @@
 import { Frog, Button } from "frog";
 import { devtools } from "frog/dev";
-import { serve } from "frog/serve";
 
-// ==== БАЗА ПРИЛОЖЕНИЯ ====
-const app = new Frog({ basePath: "/api" });
+const app = new Frog({
+  basePath: "/api",
+  title: "Tanks Frame Game", // обязательный параметр
+});
+
 devtools(app, { serveStatic: true });
+
 
 // ==== ТИПЫ И ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====
 type Dir = "U" | "D" | "L" | "R";
@@ -154,4 +157,3 @@ app.frame("/share", (c) => {
 });
 
 // ==== СЕРВЕР ====
-serve(app);
