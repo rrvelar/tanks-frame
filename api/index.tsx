@@ -1,68 +1,69 @@
-import { Frog } from "frog";
+/** @jsxImportSource frog/jsx */
+import { Frog, Button } from "frog";
 
 type State = {
   x: number;
   y: number;
 };
 
-export const app = new Frog<{ State: State }>({
-  initialState: { x: 0, y: 0 },
+const app = new Frog<{ State: State }>({
+  title: "Tanks Frame",        // ✅ обязательное поле
+  initialState: { x: 4, y: 4 } // ✅ стартовое состояние
 });
 
-app.frame("/", (ctx) => {
-  const { x, y } = ctx.state;
-
-  return ctx.res({
+function render(state: State, c: any) {
+  return c.res({
     image: (
-      <div
-        style={{
-          fontSize: 42,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100%",
-        }}
-      >
-        <p>🚀 Tanks Frame</p>
-        <p>Position: ({x}, {y})</p>
+      <div style={{ fontSize: 28, textAlign: "center" }}>
+        🚀 Tanks Frame
+        <div>Position: ({state.x}, {state.y})</div>
       </div>
     ),
     intents: [
-      <button action="/up">⬆️ Up</button>,
-      <button action="/down">⬇️ Down</button>,
-      <button action="/left">⬅️ Left</button>,
-      <button action="/right">➡️ Right</button>,
+      <Button action="/up">⬆️</Button>,
+      <Button action="/down">⬇️</Button>,
+      <Button action="/left">⬅️</Button>,
+      <Button action="/right">➡️</Button>,
     ],
   });
+}
+
+// стартовый экран
+app.frame("/", (c) => {
+  const { x, y } = c.deriveState((s) => s); // ✅ заменили c.state
+  return render({ x, y }, c);
 });
 
-app.frame("/up", (ctx) => {
-  ctx.updateState((s) => {
-    s.y -= 1;
+// движение вверх
+app.frame("/up", (c) => {
+  const { x, y } = c.deriveState((s) => {
+    s.y = Math.max(0, s.y - 1);
   });
-  return ctx.res({ redirect: "/" });
+  return render({ x, y }, c);
 });
 
-app.frame("/down", (ctx) => {
-  ctx.updateState((s) => {
-    s.y += 1;
+// движение вниз
+app.frame("/down", (c) => {
+  const { x, y } = c.deriveState((s) => {
+    s.y = Math.min(9, s.y + 1);
   });
-  return ctx.res({ redirect: "/" });
+  return render({ x, y }, c);
 });
 
-app.frame("/left", (ctx) => {
-  ctx.updateState((s) => {
-    s.x -= 1;
+// движение влево
+app.frame("/left", (c) => {
+  const { x, y } = c.deriveState((s) => {
+    s.x = Math.max(0, s.x - 1);
   });
-  return ctx.res({ redirect: "/" });
+  return render({ x, y }, c);
 });
 
-app.frame("/right", (ctx) => {
-  ctx.updateState((s) => {
-    s.x += 1;
+// движение вправо
+app.frame("/right", (c) => {
+  const { x, y } = c.deriveState((s) => {
+    s.x = Math.min(9, s.x + 1);
   });
-  return ctx.res({ redirect: "/" });
+  return render({ x, y }, c);
 });
 
 export default app;
